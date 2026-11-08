@@ -266,3 +266,17 @@ Next: Milestone 1 (Step 1.1).
 - [x] `tsc` clean; git commit
 
 **Milestone 3 COMPLETE.**
+
+## Milestone 4: Dark Prism UI, Demo & Deployment
+
+### ✅ Step 4.1: `/studio` Deposit Screen & Zustand Store — COMPLETE
+
+- [x] `src/lib/store/useRefractStore.ts` — note/runtime-key/transaction-state/spend-cap store,
+      localStorage hydration for the runtime key + note metadata
+- [x] `PrismDepositCard` — 35+-chain selector, amount, Confidential Intents toggle, 30 bps badge,
+      local note generation, `.json` backup download, quote call, optimistic credit call
+- [x] `DefiFloatTelemetryCard` — live 90/10 float bar, Kamino APY, subsidy, commitment display
+- [x] `/studio` page (responsive 2-column → 1-column)
+- [x] `tests/e2e/studio-deposit.spec.ts` — 4/4 at 1440px & 375px: backup download, optimistic banner,
+      90/10 telemetry, 0 axe violations
+- [x] Git commit

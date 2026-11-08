@@ -168,3 +168,90 @@ select {
     padding: 16px;
   }
 }
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field > span {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid var(--border-interactive);
+  color: var(--text-secondary);
+  width: fit-content;
+}
+
+.alert {
+  border: 1px solid var(--semantic-error);
+  background: rgba(248, 113, 113, 0.12);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+}
+
+.success {
+  border: 1px solid var(--accent-mint);
+  background: rgba(52, 211, 153, 0.1);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+}
+
+.progress {
+  height: 12px;
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-interactive);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress > div {
+  height: 100%;
+  background: var(--accent-mint);
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.checkbox-row input {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+}
+
+.success .muted,
+.alert .muted {
+  color: var(--text-secondary);
+}
