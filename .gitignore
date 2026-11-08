@@ -13,3 +13,5 @@ playwright-report/
 test-results/
 public/circuits/*.wasm
 public/circuits/*.zkey
+build/
+circuits/*.ptau

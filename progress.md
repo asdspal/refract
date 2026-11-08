@@ -80,3 +80,20 @@ if Vercel p95 needs the extra milliseconds.
 
 **Milestone 0 COMPLETE.** Open deviation: `npm audit` transitive advisories (no upstream fix).
 Next: Milestone 1 (Step 1.1).
+
+## Milestone 1: Circom Circuit & Solana Anchor RefractVault
+
+### ✅ Step 1.1: Depth-20 Circom Circuit & groth16-solana Verifying Key — COMPLETE
+
+- [x] `circuits/refract_note_spend.circom` — Poseidon(1) nullifier, Poseidon(3) commitment,
+      depth-20 Poseidon Merkle inclusion with boolean path indices, `LessEqThan(64)` spend cap,
+      quadratic session-key binding; 4 public inputs in groth16-solana order
+- [x] `scripts/compile_circuit.mjs` — compiles WASM/R1CS, generates pot14 locally (Hermez CDN
+      returned 403), deterministic Phase-2 zkey, exports `.wasm`/`.zkey` to `public/circuits/`,
+      and emits `programs/refract_vault/src/verifying_key.rs`
+- [x] `src/lib/zkapi/merkleTree.ts` — Poseidon helpers, zero hashes, tree build, Merkle proof
+- [x] `tests/unit/circuit-prover.test.ts` — 3/3 pass: valid proof verifies, over-cap rejected,
+      tampered public input rejected. Node `fullProve` ~2.4s (first) / ~1.8s
+- [x] `anchor build` compiles with the generated `VERIFYING_KEY` (5 IC points)
+- [x] `npx tsc --noEmit` clean
+- [x] Git commit
