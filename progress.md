@@ -44,3 +44,15 @@ widget / TON SDK trees (no upstream fix available); direct pinned deps are clean
 
 ponytail: spend meter is a single Postgres atomic UPDATE path (correct + race-safe).
 Add the Upstash Redis Lua fast path when measured p95 exceeds the 15ms NFR.
+
+### ✅ Step 0.4: Hour-1 Spike, BN254 Serializer & Telemetry Endpoints — COMPLETE
+
+- [x] `src/lib/zkapi/bn254Serializer.ts` — BE 32-byte encoding, G1 y-negation mod q, EIP-197 G2 order, Poseidon commitment
+- [x] `blueprint/spikes/verify_stack.ts` — live Aurora check: **READY_FOR_BUILD**, 216 tokens / 39 chains / 596ms
+- [x] `GET /api/v1/health` and `GET /api/v1/defi/vault-stats` with `X-Correlation-Id`
+- [x] `blueprint/openapi.yaml` — Redocly lint: **valid, 0 errors** (5 warnings)
+- [x] `tests/unit/crypto-parity.test.ts` (8) + `tests/integration/health-and-stats.test.ts` (2) pass
+- [x] Full suite: **28/28 tests pass**; `npx tsc --noEmit` clean
+- [x] Git commit
+
+**Milestone 0 complete** (toolchain-gated Devnet deploy excluded). Next: Milestone 1 (Step 1.1).
