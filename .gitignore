@@ -16,3 +16,7 @@ public/circuits/*.zkey
 build/
 circuits/*.ptau
 tsconfig.tsbuildinfo
+memory-bank/
+blueprint/
+progress.md
+docs/DEMO_SCRIPT.md

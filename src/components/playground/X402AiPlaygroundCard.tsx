@@ -101,6 +101,7 @@ export function X402AiPlaygroundCard() {
           <select value={model} onChange={(e) => setModel(e.target.value)}>
             <option value="gpt-4o-mini">GPT-4o-mini</option>
             <option value="claude-3-5-sonnet">Claude 3.5 Sonnet</option>
+            <option value="fireworks">Fireworks (DeepSeek V4.1 Flash)</option>
           </select>
         </label>
         <label className="field">

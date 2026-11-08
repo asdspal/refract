@@ -48,6 +48,10 @@ Client ─ Groth16 BN254 proof ─▶ settle_zk_spend on Solana (106–113k CU)
   runtime-key verification, agent spend firewall, compensating rollback, Ed25519 receipts.
 - **Agent firewall:** a request priced above `max_per_request_micro_usdc` is rejected with
   `HTTP 403 ERR_SPEND_CAP_EXCEEDED` and **0 USDC** deducted.
+- **AI inference providers:** OpenAI (`gpt-4o-mini`) primary, Anthropic (`claude-3-5-sonnet`)
+  fallback, and any OpenAI-compatible endpoint via `FIREWORKS_API_KEY`,
+  `FIREWORKS_BASE_URL`, and `FIREWORKS_MODEL` (Fireworks by default). With no keys a
+  deterministic local responder exercises the full x402 path.
 - **Unlinkability:** `intent_deposits` and `zk_runtime_sessions` share no foreign key;
   IP/payment headers are stripped before the merchant handler; `TEST-SEC-001` asserts
   `walletBytesReceived === 0`.

@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const Schema = z.object({
-  model: z.enum(["gpt-4o-mini", "claude-3-5-sonnet"]).optional().default("gpt-4o-mini"),
+  model: z.enum(["gpt-4o-mini", "claude-3-5-sonnet", "fireworks"]).optional().default("gpt-4o-mini"),
   messages: z
     .array(
       z.object({

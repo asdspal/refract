@@ -118,6 +118,9 @@ function checkConfiguration() {
     "UPSTASH_REDIS_REST_TOKEN",
     "OPENAI_API_KEY",
     "ANTHROPIC_API_KEY",
+    "FIREWORKS_API_KEY",
+    "FIREWORKS_BASE_URL",
+    "FIREWORKS_MODEL",
     "REFRACT_INTERNAL_WEBHOOK_SECRET",
   ];
   const lines = readFileSync(resolve(root, ".env.example"), "utf8").split("\n");
@@ -248,7 +251,7 @@ async function main() {
     "",
     "## Known deviations / external gates",
     "- `npm audit` reports transitive advisories inside the Aurora swap widget / TON SDK tree (no upstream fix).",
-    "- Aurora Confidential Intents live quotes require a valid 1Click Partner JWT in `AURORA_STUDIO_JWT_TOKEN`.",
+    "- Aurora Confidential Intents are enabled with the configured 1Click Partner JWT (live confidential quote verified).",
     "- `x402` p95 is measured locally at ~44ms; the 15ms NFR requires Vercel + Upstash colocation.",
     "- Mainnet-Beta deployment and the funded micro-liquidity demo require operator SOL/USDC.",
     "",

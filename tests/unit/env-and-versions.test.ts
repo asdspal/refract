@@ -33,8 +33,14 @@ describe("environment register", () => {
     .filter((l) => l.includes("=") && !l.trimStart().startsWith("#"))
     .map((l) => l.split("=")[0].trim());
 
-  it("documents exactly the 23 required variables", () => {
-    expect(keys).toHaveLength(23);
+  it("documents exactly the 26 required variables", () => {
+    expect(keys).toHaveLength(26);
+  });
+
+  it("declares an OpenAI-compatible Fireworks provider", () => {
+    expect(envExample).toContain("FIREWORKS_API_KEY=");
+    expect(envExample).toContain("FIREWORKS_BASE_URL=");
+    expect(envExample).toContain("FIREWORKS_MODEL=");
   });
 
   it("exposes the devnet deployer pubkey for faucet funding", () => {
