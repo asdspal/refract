@@ -14,9 +14,11 @@ export default defineConfig({
       "tests/integration/**/*.test.ts",
       "tests/security/**/*.test.ts",
       "tests/ai/**/*.test.ts",
+      "tests/anchor/**/*.test.ts",
     ],
     testTimeout: 30000,
     hookTimeout: 60000,
     fileParallelism: false,
+    setupFiles: ["tests/setup.ts"],
   },
 });
