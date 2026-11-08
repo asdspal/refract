@@ -251,3 +251,18 @@ Next: Milestone 1 (Step 1.1).
 - [x] `tests/load/x402_verify.test.ts` — 100 calls: **p50 40.7ms / p95 44.0ms** local
       (15ms NFR re-measured on Vercel colocation)
 - [x] `tsc` clean; git commit
+
+### ✅ Step 3.4: Protected AI Chat, Spend Firewall & Unlinkability — COMPLETE
+
+- [x] `src/lib/ai/inferenceRouter.ts` — gpt-4o-mini primary, claude-3-5-sonnet failover,
+      1,500ms timeout, 1,024 max tokens, deterministic local responder without live keys,
+      optional simulated primary failure for the fallback path
+- [x] `POST /api/v1/ai/chat` wrapped in `withX402Gate`; returns reply, model, provider,
+      charged/remaining, `walletBytesReceived: 0`
+- [x] `tests/security/unlinkability.test.ts` — 2/2: 0 wallet bytes to merchant/DB, IP +
+      payment headers stripped, 0 FKs deposits↔sessions, $2.50 attack blocked with no deduction
+- [x] `tests/ai/x402_agent_eval.test.ts` — **20/20** scenarios (402 parse, paid+receipt,
+      firewall refusal, model failover, 5xx rollback)
+- [x] `tsc` clean; git commit
+
+**Milestone 3 COMPLETE.**
