@@ -1,11 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import {
-  downloadNoteBackup,
-  generateLocalZkNote,
-  saveNoteEncrypted,
-} from "@/lib/zkapi/clientNoteVault";
 import { useRefractStore, writeOriginQuoteId } from "@/lib/store/useRefractStore";
 
 const DEMO_REFUND_ADDRESS = "0x71C95911E9a5D330f4D621842EC243EE1343292e";
@@ -85,6 +80,9 @@ export function PrismDepositCard() {
     setBusy(true);
     try {
       setTxState(1);
+      // Lazy-load circomlibjs/Poseidon only when the user actually deposits.
+      const { downloadNoteBackup, generateLocalZkNote, saveNoteEncrypted } =
+        await import("@/lib/zkapi/clientNoteVault");
       const note = await generateLocalZkNote(micros);
       downloadNoteBackup(note);
       await saveNoteEncrypted(note, "refract-local-session");

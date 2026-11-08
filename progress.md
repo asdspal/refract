@@ -293,3 +293,33 @@ Next: Milestone 1 (Step 1.1).
       inspector, $2.50 block, refund `PROCESSING_REFUND`, 0 axe violations
 - [x] Full Playwright suite: **16/16** (a11y + studio + playground/merchant)
 - [x] Git commit
+
+### ✅ Step 4.3: Devnet Vault Seed & Phase-8 Verification Gates — COMPLETE
+
+- [x] `scripts/deploy_and_seed_vault.ts` — initializes the vault, seeds 20 USDC, rebalances 90/10.
+      Devnet run: vault `7xnPLA7zfMQpg5pQzqhdjUD25GUrS1rXbGigidKkLKV6`, 2 USDC liquid / 18 USDC staked
+      ([deposit](https://explorer.solana.com/tx/32pQwFv4n7vuXTN2v1pdhDMpfGjhuCQZESrd7W2TbUZKfT59yXehDneY3RBVi4WNdVkGp3kP3g3nnDUTaN1Lius5?cluster=devnet),
+      [rebalance](https://explorer.solana.com/tx/2PApenYxo7BB56B4Az3pJwMLQud4LU8ujHPQZ1zt5W5e9cP1cyCntZQu3HqNjiUxaTqaMNN6dKAPKuXTfM1YqB6J?cluster=devnet))
+- [x] `blueprint/requirements.csv`, `blueprint/traceability.csv`, `blueprint/models/load_and_cost.py`
+- [x] `scripts/verify_blueprint_gates.ts` — **8/8 gates PASS**, report written to
+      `blueprint/reviews/verification.md` with **OVERALL STATUS: READY FOR PRODUCTION & SUBMISSION**
+- [x] Git commit
+
+### ✅ Step 4.4: Judge Docs, Production Build & Smoke — COMPLETE
+
+- [x] Root `README.md` (architecture, Aurora/zkAPI/x402/DeFi proof links, setup, deviations)
+- [x] `docs/DEMO_SCRIPT.md` — 90-second time-coded demo
+- [x] `next.config.ts` client webpack fallbacks; `/studio` lazy-loads Poseidon (First Load JS **104 kB**, <= 180 kB)
+- [x] `tests/e2e/prod-smoke.spec.ts` — 8/8 against the production build (health, vault stats,
+      3 routes, HTTP 402 challenge)
+- [x] `npm run build` succeeds
+- [x] Git commit + tag `v2.0.0-hackathon-release`
+
+## Final status
+
+- **All milestones M0–M4 complete.**
+- Full suite: 71 unit/integration/anchor + 16 Playwright E2E + 8 Phase-8 gates.
+- Devnet verified: program deployment, deposit/commit, 90/10 rebalance, Groth16 settlement,
+  runtime-key mint, worker settlement.
+- **Operator-only external gates:** Vercel deployment, Mainnet-Beta vault + `$15–$25` USDC
+  micro-liquidity, 1Click Partner JWT for confidential live quotes, demo video + Devpost submission.
