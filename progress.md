@@ -184,3 +184,20 @@ Next: Milestone 1 (Step 1.1).
       on-chain root == circomlibjs root, session upgraded (9.99M principal / 10.41M remaining),
       tree endpoint **86ms**; REFUNDED revokes the session
 - [x] `tsc` clean; git commit
+
+### ✅ Step 2.4: Automated Reverse-Intent Cross-Chain Refund — COMPLETE
+
+- [x] `src/lib/aurora/reverseRefundService.ts` — `PAYMENT-SIGNATURE` parsing (base64 envelope or raw token),
+      atomic `CLOSED_REFUNDED` lock, yield-subsidy deduction (anti-farming), min-$1 solver guard with
+      Solana fallback, reverse Aurora `1Click` quote, receipt audit row, Redis eviction, reopen-on-quote-failure
+- [x] `POST /api/v1/intents/refund` with auth + Zod validation
+- [x] `tests/integration/cross-chain-refund.test.ts` — 5/5 pass: atomic close + reverse quote, double refund 409,
+      post-refund spend blocked, below-minimum guard reopens the session, route auth + live reverse quote
+- [x] **Devnet worker verification** (`scripts/verify_worker_devnet.ts`): fresh devnet mint + vault,
+      worker settled a deposit on Devnet —
+      tx `3U87nqHBMDyrx3VnsazXMj9cb8tch6fLwSJRBQXMgXp5tZy7rBRmJVXVMqi3wJZTFCsNmNB8qejKssrYWJxKk9TJ`
+      (leaf 0, root `0x0afd96e2…48acf0`)
+- [x] Full suite: **71/71 tests pass**; `tsc` clean
+- [x] Git commit
+
+**Milestone 2 COMPLETE.** Next: Milestone 3 (client ZK prover, x402 gateway, Schnorr receipts, agent firewall).

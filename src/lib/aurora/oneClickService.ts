@@ -55,7 +55,7 @@ export interface QuoteDeps {
   quoteFn?: (request: QuoteRequest) => Promise<QuoteResponse>;
 }
 
-function configureClient(): void {
+export function configureOneClickClient(): void {
   OpenAPI.BASE =
     process.env.AURORA_ONE_CLICK_BASE_URL ?? DEFAULT_ONE_CLICK_BASE_URL;
   const jwt = process.env.AURORA_STUDIO_JWT_TOKEN;
@@ -228,7 +228,7 @@ export async function createConfidentialDepositQuote(
   deps: QuoteDeps = {},
 ): Promise<DepositQuote> {
   const request = buildQuoteRequest(params);
-  configureClient();
+  configureOneClickClient();
   const quoteFn =
     deps.quoteFn ?? ((req: QuoteRequest) => OneClickService.getQuote(req));
 
@@ -253,7 +253,7 @@ export async function getSupportedCrossChainTokens(): Promise<TokenResponse[]> {
   if (tokenCache && Date.now() - tokenCache.fetchedAt < TOKEN_CACHE_MS) {
     return tokenCache.tokens;
   }
-  configureClient();
+  configureOneClickClient();
   const tokens = await OneClickService.getTokens();
   tokenCache = { fetchedAt: Date.now(), tokens };
   return tokens;
