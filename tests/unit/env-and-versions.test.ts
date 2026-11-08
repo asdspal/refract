@@ -19,7 +19,7 @@ describe("pinned dependency versions", () => {
   });
 
   it("pins the validated framework versions", () => {
-    expect(deps.next).toBe("15.2.4");
+    expect(deps.next).toBe("15.5.29");
     expect(deps.react).toBe("19.0.0");
     expect(deps.snarkjs).toBe("0.7.6");
     expect(deps["circomlibjs"]).toBe("0.1.7");
