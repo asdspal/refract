@@ -7,7 +7,9 @@ so the merchant never sees your wallet.
 
 - **Program (Devnet):** `HyeAVxJxt37ndAE2LJBKJ36j8vKLv6PezvwxA2NsmhvH`
 - **Devnet settlement proof:** [worker deposit](https://explorer.solana.com/tx/3U87nqHBMDyrx3VnsazXMj9cb8tch6fLwSJRBQXMgXp5tZy7rBRmJVXVMqi3wJZTFCsNmNB8qejKssrYWJxKk9TJ?cluster=devnet), [vault seed + 90/10 rebalance](https://explorer.solana.com/tx/2PApenYxo7BB56B4Az3pJwMLQud4LU8ujHPQZ1zt5W5e9cP1cyCntZQu3HqNjiUxaTqaMNN6dKAPKuXTfM1YqB6J?cluster=devnet), [runtime-key mint](https://explorer.solana.com/tx/3Emx2MwLc2y49UFrdw4TxMjbMmcghbkETWgTb6x1Hp8X6YWH54ZiHC9bK21v9oqBRRCSDyWuP13jGDzgo6JbGsU?cluster=devnet)
-- **Production URL / demo video:** pending operator deployment (see `docs/DEMO_SCRIPT.md`).
+- **Demo video:** https://youtu.be/B8R_DrYMrJ4
+- **Live demo (Devnet program):** https://explorer.solana.com/address/HyeAVxJxt37ndAE2LJBKJ36j8vKLv6PezvwxA2NsmhvH?cluster=devnet
+- **Production URL:** pending operator deployment.
 
 ## How it works
 
