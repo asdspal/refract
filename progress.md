@@ -143,3 +143,18 @@ Next: Milestone 1 (Step 1.1).
 - [x] Git commit
 
 **Milestone 1 COMPLETE.** Next: Milestone 2 (Aurora intents + optimistic credit).
+
+## Milestone 2: Aurora Intents, Optimistic Credit & Refunds
+
+### ✅ Step 2.1: Aurora 1Click Quote Service & `POST /api/v1/intents/quote` — COMPLETE
+
+- [x] `src/lib/aurora/oneClickService.ts` — `buildQuoteRequest` (Confidential Intents `confidentiality: "basic"`
+      when JWT present, 30 bps `appFees`, Solana USDC destination), live `OneClickService.getQuote`,
+      idempotent persistence by commitment, 300s token cache
+- [x] `POST /api/v1/intents/quote` with Zod validation, `X-Correlation-Id`, and typed errors
+- [x] `tests/integration/aurora-quote.test.ts` — 8/8 pass, incl. live public quote (`~979ms`) and
+      route-level live quote; confidential payload + 30 bps fee asserted with an injected quote fn
+- [x] Devnet/base asset IDs confirmed: Base USDC `nep141:base-0x8335...`, Solana USDC `nep141:sol-5ce3...`
+- [ ] **Prerequisite for R-002 live:** Aurora returns `401 User authentication is required for confidential
+      intent quotes`; set `AURORA_STUDIO_JWT_TOKEN` to enable confidential live quotes. Public live quotes work now.
+- [x] `tsc` clean; git commit
