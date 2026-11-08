@@ -38,3 +38,18 @@ pub struct NullifierRecord {
 impl NullifierRecord {
     pub const LEN: usize = 8 + 32 + 8 + 32 + 8 + 1;
 }
+
+/// Per-merchant revenue and DeFi float accounting PDA.
+#[account]
+pub struct MerchantAccount {
+    pub authority: Pubkey,
+    pub usdc_mint: Pubkey,
+    pub total_revenue_micro_usdc: u64,
+    pub defi_staked_micro_usdc: u64,
+    pub yield_earned_micro_usdc: u64,
+    pub bump: u8,
+}
+
+impl MerchantAccount {
+    pub const LEN: usize = 8 + 32 + 32 + 8 + 8 + 8 + 1;
+}

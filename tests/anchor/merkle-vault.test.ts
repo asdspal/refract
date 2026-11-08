@@ -34,6 +34,7 @@ describeChain("ZkYieldVault + depth-20 Poseidon Merkle tree", () => {
   let mint: PublicKey;
   let vaultPda: PublicKey;
   let liquidPda: PublicKey;
+  let defiPda: PublicKey;
 
   beforeAll(async () => {
     chain = await startChain(18900);
@@ -48,6 +49,10 @@ describeChain("ZkYieldVault + depth-20 Poseidon Merkle tree", () => {
       [Buffer.from("liquid_vault"), vaultPda.toBuffer()],
       programId,
     );
+    [defiPda] = PublicKey.findProgramAddressSync(
+      [Buffer.from("defi_yield_vault"), vaultPda.toBuffer()],
+      programId,
+    );
 
     await program.methods
       .initializeVault(840)
@@ -55,6 +60,7 @@ describeChain("ZkYieldVault + depth-20 Poseidon Merkle tree", () => {
         vault: vaultPda,
         usdcMint: mint,
         liquidVault: liquidPda,
+        defiYieldVault: defiPda,
         authority: payer.publicKey,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: SystemProgram.programId,

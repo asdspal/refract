@@ -127,3 +127,19 @@ Next: Milestone 1 (Step 1.1).
 - [x] Program upgraded on Devnet (slot 519991966, 208,240 bytes)
 - [x] `anchor build` + `tsc` clean; M1 tests 20/20
 - [x] Git commit
+
+### ✅ Step 1.4: 90/10 DeFi Float Router, Merchant PDA & Chain-Rebuild DR — COMPLETE
+
+- [x] `initialize_vault` now also creates the `defi_yield_vault` token PDA
+- [x] `rebalance_defi_float` — 90% staked / 10% liquid, SPL CPI signed by the vault PDA,
+      emits `DefiFloatRebalanced`
+- [x] `MerchantAccount` PDA + `initialize_merchant` + `settle_merchant_revenue`
+- [x] `src/lib/defi/floatRouter.ts` (DB telemetry helper) and `scripts/rebuild_from_chain.ts`
+      (parses `DepositCommitted` Anchor events → upserts `merkle_leaves`, idempotent)
+- [x] `tests/anchor/defi-float-and-dr.test.ts` — 3/3 pass: exact 90/10 split and no-op rebalance,
+      merchant PDA + revenue settlement, chain rebuild (`RPO=0`) with correct commitment/root and < 30s
+- [x] Program upgraded on Devnet (slot 519992884, 264,232 bytes)
+- [x] Full suite: **51/51 tests pass**; `tsc` clean
+- [x] Git commit
+
+**Milestone 1 COMPLETE.** Next: Milestone 2 (Aurora intents + optimistic credit).

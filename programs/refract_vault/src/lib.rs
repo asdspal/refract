@@ -8,7 +8,7 @@ pub mod verifying_key;
 pub mod zero_hashes;
 
 use merkle::{empty_root, insert_leaf};
-use state::{NullifierRecord, ZkYieldVault, MERKLE_DEPTH, ROOT_HISTORY_SIZE};
+use state::{MerchantAccount, NullifierRecord, ZkYieldVault, MERKLE_DEPTH, ROOT_HISTORY_SIZE};
 use verifying_key::VERIFYING_KEY;
 
 declare_id!("HyeAVxJxt37ndAE2LJBKJ36j8vKLv6PezvwxA2NsmhvH");
@@ -31,13 +31,14 @@ pub mod refract_vault {
         let vault_key = ctx.accounts.vault.key();
         let usdc_mint_key = ctx.accounts.usdc_mint.key();
         let liquid_vault_key = ctx.accounts.liquid_vault.key();
+        let defi_yield_vault_key = ctx.accounts.defi_yield_vault.key();
         let bump = ctx.bumps.vault;
 
         let mut vault = ctx.accounts.vault.load_init()?;
         vault.authority = vault_key;
         vault.usdc_mint = usdc_mint_key;
         vault.liquid_vault = liquid_vault_key;
-        vault.defi_yield_vault = Pubkey::default();
+        vault.defi_yield_vault = defi_yield_vault_key;
         vault.filled_subtrees = core::array::from_fn(|i| zero_hashes::ZERO_HASHES[i]);
         vault.root_history = [[0u8; 32]; ROOT_HISTORY_SIZE];
         vault.root_history[0] = empty_root();
@@ -154,6 +155,123 @@ pub mod refract_vault {
         });
         Ok(())
     }
+
+    /// Rebalance the vault to 90% staked / 10% liquid. The vault PDA signs the
+    /// SPL token transfer between its two token accounts.
+    pub fn rebalance_defi_float(ctx: Context<RebalanceDefiFloat>) -> Result<()> {
+        let (bump, subsidy_bonus_bps, usdc_mint_key) = {
+            let vault = ctx.accounts.vault.load()?;
+            (vault.bump, vault.subsidy_bonus_bps, vault.usdc_mint)
+        };
+
+        let liquid = ctx.accounts.liquid_vault.amount;
+        let staked = ctx.accounts.defi_yield_vault.amount;
+        let total = liquid.checked_add(staked).ok_or(RefractError::MathOverflow)?;
+        let target_staked = ((total as u128 * 9_000) / 10_000) as u64;
+
+        let signer_seeds: &[&[u8]] =
+            &[b"refract_vault", usdc_mint_key.as_ref(), &[bump]];
+
+        let (liquid_after, staked_after) = if staked < target_staked {
+            let delta = target_staked - staked;
+            token::transfer(
+                CpiContext::new_with_signer(
+                    ctx.accounts.token_program.key(),
+                    Transfer {
+                        from: ctx.accounts.liquid_vault.to_account_info(),
+                        to: ctx.accounts.defi_yield_vault.to_account_info(),
+                        authority: ctx.accounts.vault.to_account_info(),
+                    },
+                    &[signer_seeds],
+                ),
+                delta,
+            )?;
+            (
+                liquid.checked_sub(delta).ok_or(RefractError::MathOverflow)?,
+                target_staked,
+            )
+        } else if staked > target_staked {
+            let delta = staked - target_staked;
+            token::transfer(
+                CpiContext::new_with_signer(
+                    ctx.accounts.token_program.key(),
+                    Transfer {
+                        from: ctx.accounts.defi_yield_vault.to_account_info(),
+                        to: ctx.accounts.liquid_vault.to_account_info(),
+                        authority: ctx.accounts.vault.to_account_info(),
+                    },
+                    &[signer_seeds],
+                ),
+                delta,
+            )?;
+            (
+                liquid.checked_add(delta).ok_or(RefractError::MathOverflow)?,
+                target_staked,
+            )
+        } else {
+            (liquid, staked)
+        };
+
+        emit!(DefiFloatRebalanced {
+            total_pool_micro_usdc: total,
+            staked_micro_usdc: staked_after,
+            liquid_micro_usdc: liquid_after,
+            subsidy_bonus_bps,
+        });
+        Ok(())
+    }
+
+    /// Create the per-merchant revenue PDA.
+    pub fn initialize_merchant(ctx: Context<InitializeMerchant>) -> Result<()> {
+        let merchant = &mut ctx.accounts.merchant;
+        merchant.authority = ctx.accounts.authority.key();
+        merchant.usdc_mint = ctx.accounts.usdc_mint.key();
+        merchant.total_revenue_micro_usdc = 0;
+        merchant.defi_staked_micro_usdc = 0;
+        merchant.yield_earned_micro_usdc = 0;
+        merchant.bump = ctx.bumps.merchant;
+        Ok(())
+    }
+
+    /// Move settled merchant revenue out of the liquid reserve.
+    pub fn settle_merchant_revenue(
+        ctx: Context<SettleMerchantRevenue>,
+        amount_micro_usdc: u64,
+    ) -> Result<()> {
+        require!(amount_micro_usdc > 0, RefractError::InvalidAmount);
+        let (bump, usdc_mint_key) = {
+            let vault = ctx.accounts.vault.load()?;
+            (vault.bump, vault.usdc_mint)
+        };
+        let signer_seeds: &[&[u8]] =
+            &[b"refract_vault", usdc_mint_key.as_ref(), &[bump]];
+
+        token::transfer(
+            CpiContext::new_with_signer(
+                ctx.accounts.token_program.key(),
+                Transfer {
+                    from: ctx.accounts.liquid_vault.to_account_info(),
+                    to: ctx.accounts.merchant_usdc.to_account_info(),
+                    authority: ctx.accounts.vault.to_account_info(),
+                },
+                &[signer_seeds],
+            ),
+            amount_micro_usdc,
+        )?;
+
+        let merchant = &mut ctx.accounts.merchant;
+        merchant.total_revenue_micro_usdc = merchant
+            .total_revenue_micro_usdc
+            .checked_add(amount_micro_usdc)
+            .ok_or(RefractError::MathOverflow)?;
+
+        emit!(MerchantRevenueSettled {
+            merchant: merchant.key(),
+            amount_micro_usdc,
+            total_revenue_micro_usdc: merchant.total_revenue_micro_usdc,
+        });
+        Ok(())
+    }
 }
 
 #[derive(Accounts)]
@@ -184,6 +302,16 @@ pub struct InitializeVault<'info> {
         bump,
     )]
     pub liquid_vault: Account<'info, TokenAccount>,
+
+    #[account(
+        init,
+        payer = authority,
+        token::mint = usdc_mint,
+        token::authority = vault,
+        seeds = [b"defi_yield_vault", vault.key().as_ref()],
+        bump,
+    )]
+    pub defi_yield_vault: Account<'info, TokenAccount>,
 
     #[account(mut)]
     pub authority: Signer<'info>,
@@ -250,6 +378,92 @@ pub struct SettleZkSpend<'info> {
     pub system_program: Program<'info, System>,
 }
 
+#[derive(Accounts)]
+pub struct RebalanceDefiFloat<'info> {
+    #[account(
+        seeds = [b"refract_vault", usdc_mint.key().as_ref()],
+        bump,
+    )]
+    pub vault: AccountLoader<'info, ZkYieldVault>,
+
+    pub usdc_mint: Account<'info, Mint>,
+
+    #[account(
+        mut,
+        seeds = [b"liquid_vault", vault.key().as_ref()],
+        bump,
+        token::authority = vault,
+    )]
+    pub liquid_vault: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        seeds = [b"defi_yield_vault", vault.key().as_ref()],
+        bump,
+        token::authority = vault,
+    )]
+    pub defi_yield_vault: Account<'info, TokenAccount>,
+
+    pub authority: Signer<'info>,
+    pub token_program: Program<'info, Token>,
+}
+
+#[derive(Accounts)]
+pub struct InitializeMerchant<'info> {
+    #[account(
+        init,
+        payer = authority,
+        space = MerchantAccount::LEN,
+        seeds = [b"merchant", authority.key().as_ref()],
+        bump,
+    )]
+    pub merchant: Account<'info, MerchantAccount>,
+
+    pub usdc_mint: Account<'info, Mint>,
+
+    #[account(mut)]
+    pub authority: Signer<'info>,
+
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct SettleMerchantRevenue<'info> {
+    #[account(
+        seeds = [b"refract_vault", usdc_mint.key().as_ref()],
+        bump,
+    )]
+    pub vault: AccountLoader<'info, ZkYieldVault>,
+
+    pub usdc_mint: Account<'info, Mint>,
+
+    #[account(
+        mut,
+        seeds = [b"liquid_vault", vault.key().as_ref()],
+        bump,
+        token::authority = vault,
+    )]
+    pub liquid_vault: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        seeds = [b"merchant", authority.key().as_ref()],
+        bump,
+        constraint = merchant.authority == authority.key() @ RefractError::InvalidMerchant,
+    )]
+    pub merchant: Account<'info, MerchantAccount>,
+
+    #[account(
+        mut,
+        token::mint = usdc_mint,
+        token::authority = authority,
+    )]
+    pub merchant_usdc: Account<'info, TokenAccount>,
+
+    pub authority: Signer<'info>,
+    pub token_program: Program<'info, Token>,
+}
+
 #[error_code]
 pub enum RefractError {
     #[msg("Merkle root is not in the recent root history")]
@@ -270,6 +484,8 @@ pub enum RefractError {
     MathOverflow,
     #[msg("Nullifier already spent")]
     NullifierAlreadySpent,
+    #[msg("Invalid merchant account")]
+    InvalidMerchant,
 }
 
 #[event]
@@ -299,4 +515,19 @@ pub struct NullifierSpent {
     pub spend_cap_micro_usdc: u64,
     pub session_pubkey_hash: [u8; 32],
     pub slot: u64,
+}
+
+#[event]
+pub struct DefiFloatRebalanced {
+    pub total_pool_micro_usdc: u64,
+    pub staked_micro_usdc: u64,
+    pub liquid_micro_usdc: u64,
+    pub subsidy_bonus_bps: u16,
+}
+
+#[event]
+pub struct MerchantRevenueSettled {
+    pub merchant: Pubkey,
+    pub amount_micro_usdc: u64,
+    pub total_revenue_micro_usdc: u64,
 }
