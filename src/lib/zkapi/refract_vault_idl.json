@@ -1,0 +1,1211 @@
+{
+  "address": "HyeAVxJxt37ndAE2LJBKJ36j8vKLv6PezvwxA2NsmhvH",
+  "metadata": {
+    "name": "refract_vault",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Refract zkAPI yield vault and Groth16 verifier"
+  },
+  "instructions": [
+    {
+      "name": "deposit_and_commit",
+      "docs": [
+        "Transfer settled USDC into the vault and insert the Poseidon commitment",
+        "into the depth-20 Merkle tree."
+      ],
+      "discriminator": [
+        185,
+        118,
+        114,
+        72,
+        76,
+        94,
+        86,
+        74
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  102,
+                  114,
+                  97,
+                  99,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "usdc_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "liquid_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_mint"
+        },
+        {
+          "name": "depositor_usdc",
+          "writable": true
+        },
+        {
+          "name": "depositor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "commitment",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "amount_micro_usdc",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_merchant",
+      "docs": [
+        "Create the per-merchant revenue PDA."
+      ],
+      "discriminator": [
+        7,
+        90,
+        74,
+        38,
+        99,
+        111,
+        142,
+        77
+      ],
+      "accounts": [
+        {
+          "name": "merchant",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  114,
+                  99,
+                  104,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_mint"
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_vault",
+      "docs": [
+        "Create the zero-copy vault PDA and its liquid USDC token account."
+      ],
+      "discriminator": [
+        48,
+        191,
+        163,
+        44,
+        71,
+        129,
+        63,
+        164
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  102,
+                  114,
+                  97,
+                  99,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "usdc_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_mint"
+        },
+        {
+          "name": "liquid_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "defi_yield_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  102,
+                  105,
+                  95,
+                  121,
+                  105,
+                  101,
+                  108,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "subsidy_bonus_bps",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "ping_vault",
+      "docs": [
+        "Baseline scaffold instruction used to prove the program builds and deploys."
+      ],
+      "discriminator": [
+        236,
+        123,
+        180,
+        23,
+        36,
+        35,
+        78,
+        118
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "rebalance_defi_float",
+      "docs": [
+        "Rebalance the vault to 90% staked / 10% liquid. The vault PDA signs the",
+        "SPL token transfer between its two token accounts."
+      ],
+      "discriminator": [
+        119,
+        174,
+        145,
+        131,
+        224,
+        93,
+        132,
+        104
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  102,
+                  114,
+                  97,
+                  99,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "usdc_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_mint"
+        },
+        {
+          "name": "liquid_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "defi_yield_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  102,
+                  105,
+                  95,
+                  121,
+                  105,
+                  101,
+                  108,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "settle_merchant_revenue",
+      "docs": [
+        "Move settled merchant revenue out of the liquid reserve."
+      ],
+      "discriminator": [
+        59,
+        172,
+        231,
+        17,
+        174,
+        89,
+        234,
+        225
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  102,
+                  114,
+                  97,
+                  99,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "usdc_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_mint"
+        },
+        {
+          "name": "liquid_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  113,
+                  117,
+                  105,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "merchant",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  101,
+                  114,
+                  99,
+                  104,
+                  97,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "merchant_usdc",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount_micro_usdc",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "settle_zk_spend",
+      "docs": [
+        "Verify a Groth16 BN254 proof on-chain, record the nullifier PDA, and",
+        "authorize a spend-capped Runtime Key session off-chain."
+      ],
+      "discriminator": [
+        116,
+        79,
+        219,
+        36,
+        33,
+        228,
+        176,
+        1
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  102,
+                  114,
+                  97,
+                  99,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "usdc_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "usdc_mint"
+        },
+        {
+          "name": "nullifier_record",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  110,
+                  117,
+                  108,
+                  108,
+                  105,
+                  102,
+                  105,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "nullifier_hash"
+              }
+            ]
+          }
+        },
+        {
+          "name": "relayer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "proof_a",
+          "type": {
+            "array": [
+              "u8",
+              64
+            ]
+          }
+        },
+        {
+          "name": "proof_b",
+          "type": {
+            "array": [
+              "u8",
+              128
+            ]
+          }
+        },
+        {
+          "name": "proof_c",
+          "type": {
+            "array": [
+              "u8",
+              64
+            ]
+          }
+        },
+        {
+          "name": "public_inputs",
+          "type": {
+            "array": [
+              {
+                "array": [
+                  "u8",
+                  32
+                ]
+              },
+              4
+            ]
+          }
+        },
+        {
+          "name": "nullifier_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "MerchantAccount",
+      "discriminator": [
+        182,
+        10,
+        106,
+        140,
+        73,
+        79,
+        234,
+        186
+      ]
+    },
+    {
+      "name": "NullifierRecord",
+      "discriminator": [
+        56,
+        18,
+        57,
+        175,
+        69,
+        202,
+        189,
+        70
+      ]
+    },
+    {
+      "name": "ZkYieldVault",
+      "discriminator": [
+        25,
+        138,
+        5,
+        20,
+        147,
+        203,
+        142,
+        155
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "DefiFloatRebalanced",
+      "discriminator": [
+        22,
+        112,
+        220,
+        114,
+        70,
+        224,
+        9,
+        238
+      ]
+    },
+    {
+      "name": "DepositCommitted",
+      "discriminator": [
+        10,
+        239,
+        62,
+        40,
+        90,
+        44,
+        14,
+        16
+      ]
+    },
+    {
+      "name": "MerchantRevenueSettled",
+      "discriminator": [
+        101,
+        199,
+        226,
+        45,
+        101,
+        219,
+        49,
+        5
+      ]
+    },
+    {
+      "name": "NullifierSpent",
+      "discriminator": [
+        166,
+        111,
+        130,
+        54,
+        212,
+        115,
+        152,
+        215
+      ]
+    },
+    {
+      "name": "VaultInitialized",
+      "discriminator": [
+        180,
+        43,
+        207,
+        2,
+        18,
+        71,
+        3,
+        75
+      ]
+    },
+    {
+      "name": "VaultPinged",
+      "discriminator": [
+        251,
+        249,
+        45,
+        227,
+        197,
+        99,
+        142,
+        151
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "UnknownMerkleRoot",
+      "msg": "Merkle root is not in the recent root history"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidGroth16Proof",
+      "msg": "Groth16 proof verification failed"
+    },
+    {
+      "code": 6002,
+      "name": "SpendCapZero",
+      "msg": "Spend cap must be greater than zero"
+    },
+    {
+      "code": 6003,
+      "name": "PoseidonError",
+      "msg": "Poseidon hashing failed"
+    },
+    {
+      "code": 6004,
+      "name": "MerkleTreeFull",
+      "msg": "Merkle tree is full"
+    },
+    {
+      "code": 6005,
+      "name": "InvalidAmount",
+      "msg": "Amount must be greater than zero"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidMint",
+      "msg": "USDC mint mismatch"
+    },
+    {
+      "code": 6007,
+      "name": "MathOverflow",
+      "msg": "Math overflow"
+    },
+    {
+      "code": 6008,
+      "name": "NullifierAlreadySpent",
+      "msg": "Nullifier already spent"
+    },
+    {
+      "code": 6009,
+      "name": "InvalidMerchant",
+      "msg": "Invalid merchant account"
+    }
+  ],
+  "types": [
+    {
+      "name": "DefiFloatRebalanced",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "total_pool_micro_usdc",
+            "type": "u64"
+          },
+          {
+            "name": "staked_micro_usdc",
+            "type": "u64"
+          },
+          {
+            "name": "liquid_micro_usdc",
+            "type": "u64"
+          },
+          {
+            "name": "subsidy_bonus_bps",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DepositCommitted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "leaf_index",
+            "type": "u32"
+          },
+          {
+            "name": "commitment",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "new_root",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "amount_micro_usdc",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MerchantAccount",
+      "docs": [
+        "Per-merchant revenue and DeFi float accounting PDA."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "usdc_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_revenue_micro_usdc",
+            "type": "u64"
+          },
+          {
+            "name": "defi_staked_micro_usdc",
+            "type": "u64"
+          },
+          {
+            "name": "yield_earned_micro_usdc",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MerchantRevenueSettled",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "merchant",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount_micro_usdc",
+            "type": "u64"
+          },
+          {
+            "name": "total_revenue_micro_usdc",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "NullifierRecord",
+      "docs": [
+        "One PDA per spent nullifier; `init` makes replay fail deterministically."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "nullifier_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "spend_cap_micro_usdc",
+            "type": "u64"
+          },
+          {
+            "name": "session_pubkey_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "spent_at_slot",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "NullifierSpent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "nullifier_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "spend_cap_micro_usdc",
+            "type": "u64"
+          },
+          {
+            "name": "session_pubkey_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "slot",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultInitialized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "usdc_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "subsidy_bonus_bps",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultPinged",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "slot",
+            "type": "u64"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ZkYieldVault",
+      "docs": [
+        "Zero-copy vault state: incremental depth-20 Poseidon Merkle tree, root ring",
+        "buffer, and DeFi float accounting. Total `size_of` = 1,824 bytes; with the",
+        "8-byte Anchor discriminator the account is 1,832 bytes (~0.0138 SOL rent)."
+      ],
+      "serialization": "bytemuck",
+      "repr": {
+        "kind": "c"
+      },
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "usdc_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "liquid_vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "defi_yield_vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "filled_subtrees",
+            "type": {
+              "array": [
+                {
+                  "array": [
+                    "u8",
+                    32
+                  ]
+                },
+                20
+              ]
+            }
+          },
+          {
+            "name": "root_history",
+            "type": {
+              "array": [
+                {
+                  "array": [
+                    "u8",
+                    32
+                  ]
+                },
+                32
+              ]
+            }
+          },
+          {
+            "name": "total_principal_micro_usdc",
+            "type": "u64"
+          },
+          {
+            "name": "total_yield_harvested_micro_usdc",
+            "type": "u64"
+          },
+          {
+            "name": "next_leaf_index",
+            "type": "u32"
+          },
+          {
+            "name": "current_root_index",
+            "type": "u32"
+          },
+          {
+            "name": "subsidy_bonus_bps",
+            "type": "u16"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "_padding",
+            "type": {
+              "array": [
+                "u8",
+                5
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

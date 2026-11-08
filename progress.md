@@ -223,3 +223,17 @@ Next: Milestone 1 (Step 1.1).
 - [x] `tests/unit/client-note-and-worker.test.ts` — 4/4: AES roundtrip, backup import/export,
       zero secret bytes in API payload, proof **1643ms** (<= 2200ms), proof length 514
 - [x] `tsc` clean; git commit
+
+### ✅ Step 3.2: On-Chain ZK Verification & Runtime-Key Mint — COMPLETE
+
+- [x] `src/lib/zkapi/solanaVerifier.ts` — nullifier pre-check, `settle_zk_spend` submit via relayer,
+      error mapping (409 spent / 409 stale root / 400 invalid proof), CU capture, +8.4% subsidy,
+      `rk_live_zk_*` mint + session insert; env factory + test deps hook
+- [x] `POST /api/v1/zkapi/runtime-key` with Zod validation
+- [x] Fixed a real multi-leaf bug in `getMerkleProof` (sibling index was not shifted per level);
+      now correct for leaf indices > 0
+- [x] `tests/integration/runtime-key-mint.test.ts` — 4/4: real proof minted with **110,753 CU**
+      (<= 140k), effective balance 10,840,000 (840k subsidy), replay 409, corrupted proof 400, route 200
+- [x] **Devnet verified**: tx `3Emx2MwLc2y49UFrdw4TxMjbMmcghbkETWgTb6x1Hp8X6YWH54ZiHC9bK21v9oqBRRCSDyWuP13jGDzgo6JbGsU`
+      (113,753 CU, runtime key + 840k subsidy)
+- [x] `tsc` clean; git commit

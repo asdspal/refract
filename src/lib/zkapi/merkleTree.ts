@@ -83,9 +83,10 @@ export function getMerkleProof(tree: MerkleTree, leafIndex: number): MerkleProof
   const pathElements: Field[] = [];
   const pathIndices: number[] = [];
   for (let d = 0; d < depth; d++) {
-    const sibling = leafIndex ^ 1;
+    const nodeIndex = leafIndex >> d;
+    const sibling = nodeIndex ^ 1;
     pathElements.push(tree.levels[d][sibling] ?? tree.zeroHashes[d]);
-    pathIndices.push((leafIndex >> d) & 1);
+    pathIndices.push(nodeIndex & 1);
   }
   return {
     root: tree.root,
