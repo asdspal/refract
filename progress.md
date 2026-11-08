@@ -112,3 +112,18 @@ Next: Milestone 1 (Step 1.1).
 - [x] Program upgraded on Devnet (slot 519990494, 178,928 bytes)
 - [x] `anchor build` + `npx tsc --noEmit` clean
 - [x] Git commit
+
+### ✅ Step 1.3: On-Chain Groth16 Settlement & Nullifier PDA — COMPLETE
+
+- [x] `settle_zk_spend` — checks `merkle_root` is in the 32-root history, verifies the
+      `groth16-solana` BN254 proof (`Groth16Verifier::<4>`), and `init`s a `NullifierRecord` PDA
+      seeded by the nullifier hash
+- [x] **SPK-01 byte-layout bug found and fixed**: proof A is negated, proof B/C are not
+      (`serializeGroth16ProofForSolana` previously negated C). Verified against the
+      groth16-solana reference `proof_parser`/`vk/circom` conventions.
+- [x] `tests/anchor/zk-spend-verifier.test.ts` — 2/2 pass: real snarkjs proof verifies on-chain in
+      **106,253–112,253 CU** (<= 140,000), replay rejected, tampered public input rejected with
+      `InvalidGroth16Proof` and no PDA created
+- [x] Program upgraded on Devnet (slot 519991966, 208,240 bytes)
+- [x] `anchor build` + `tsc` clean; M1 tests 20/20
+- [x] Git commit

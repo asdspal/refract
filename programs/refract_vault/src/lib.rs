@@ -1,5 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
+use groth16_solana::groth16::Groth16Verifier;
 
 pub mod merkle;
 pub mod state;
@@ -8,6 +9,7 @@ pub mod zero_hashes;
 
 use merkle::{empty_root, insert_leaf};
 use state::{NullifierRecord, ZkYieldVault, MERKLE_DEPTH, ROOT_HISTORY_SIZE};
+use verifying_key::VERIFYING_KEY;
 
 declare_id!("HyeAVxJxt37ndAE2LJBKJ36j8vKLv6PezvwxA2NsmhvH");
 
@@ -101,6 +103,57 @@ pub mod refract_vault {
         });
         Ok(())
     }
+
+    /// Verify a Groth16 BN254 proof on-chain, record the nullifier PDA, and
+    /// authorize a spend-capped Runtime Key session off-chain.
+    pub fn settle_zk_spend(
+        ctx: Context<SettleZkSpend>,
+        proof_a: [u8; 64],
+        proof_b: [u8; 128],
+        proof_c: [u8; 64],
+        public_inputs: [[u8; 32]; 4],
+        nullifier_hash: [u8; 32],
+    ) -> Result<()> {
+        require!(nullifier_hash == public_inputs[1], RefractError::InvalidGroth16Proof);
+        let vault = ctx.accounts.vault.load()?;
+        require!(
+            merkle::is_known_root(&vault, &public_inputs[0]),
+            RefractError::UnknownMerkleRoot
+        );
+        drop(vault);
+
+        let spend_cap_micro_usdc =
+            u64::from_be_bytes(public_inputs[2][24..32].try_into().unwrap());
+        require!(spend_cap_micro_usdc > 0, RefractError::SpendCapZero);
+
+        let mut verifier = Groth16Verifier::<4>::new(
+            &proof_a,
+            &proof_b,
+            &proof_c,
+            &public_inputs,
+            &VERIFYING_KEY,
+        )
+        .map_err(|_| error!(RefractError::InvalidGroth16Proof))?;
+        verifier
+            .verify()
+            .map_err(|_| error!(RefractError::InvalidGroth16Proof))?;
+
+        let slot = Clock::get()?.slot;
+        let record = &mut ctx.accounts.nullifier_record;
+        record.nullifier_hash = nullifier_hash;
+        record.spend_cap_micro_usdc = spend_cap_micro_usdc;
+        record.session_pubkey_hash = public_inputs[3];
+        record.spent_at_slot = slot;
+        record.bump = ctx.bumps.nullifier_record;
+
+        emit!(NullifierSpent {
+            nullifier_hash,
+            spend_cap_micro_usdc,
+            session_pubkey_hash: public_inputs[3],
+            slot,
+        });
+        Ok(())
+    }
 }
 
 #[derive(Accounts)]
@@ -171,6 +224,32 @@ pub struct DepositAndCommit<'info> {
     pub token_program: Program<'info, Token>,
 }
 
+#[derive(Accounts)]
+#[instruction(proof_a: [u8; 64], proof_b: [u8; 128], proof_c: [u8; 64], public_inputs: [[u8; 32]; 4], nullifier_hash: [u8; 32])]
+pub struct SettleZkSpend<'info> {
+    #[account(
+        seeds = [b"refract_vault", usdc_mint.key().as_ref()],
+        bump,
+    )]
+    pub vault: AccountLoader<'info, ZkYieldVault>,
+
+    pub usdc_mint: Account<'info, Mint>,
+
+    #[account(
+        init,
+        payer = relayer,
+        space = NullifierRecord::LEN,
+        seeds = [b"nullifier", nullifier_hash.as_ref()],
+        bump,
+    )]
+    pub nullifier_record: Account<'info, NullifierRecord>,
+
+    #[account(mut)]
+    pub relayer: Signer<'info>,
+
+    pub system_program: Program<'info, System>,
+}
+
 #[error_code]
 pub enum RefractError {
     #[msg("Merkle root is not in the recent root history")]
@@ -212,4 +291,12 @@ pub struct DepositCommitted {
     pub commitment: [u8; 32],
     pub new_root: [u8; 32],
     pub amount_micro_usdc: u64,
+}
+
+#[event]
+pub struct NullifierSpent {
+    pub nullifier_hash: [u8; 32],
+    pub spend_cap_micro_usdc: u64,
+    pub session_pubkey_hash: [u8; 32],
+    pub slot: u64,
 }

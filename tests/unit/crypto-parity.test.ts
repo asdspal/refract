@@ -53,6 +53,9 @@ describe("BN254 serialization", () => {
     expect(proof.proofA).toHaveLength(64);
     expect(proof.proofB).toHaveLength(128);
     expect(proof.proofC).toHaveLength(64);
+    // proof A is negated, proof C is not.
+    expect(BigInt(proof.proofA[63])).toBe((BN254_FIELD_MODULUS_Q - 2n) & 0xffn);
+    expect(BigInt("0x" + Buffer.from(proof.proofC.slice(32)).toString("hex"))).toBe(6n);
   });
 });
 
