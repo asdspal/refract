@@ -1,11 +1,6 @@
-import { createHash } from "node:crypto";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { closePool, query } from "../src/db/index";
-
-const DEPOSIT_EVENT_DISCRIMINATOR = createHash("sha256")
-  .update("event:DepositCommitted")
-  .digest()
-  .subarray(0, 8);
+import { decodeDepositEventLog } from "../src/lib/zkapi/depositEvent";
 
 export interface RebuildOptions {
   connection: Connection;
@@ -19,26 +14,6 @@ export interface RebuiltLeaf {
   newRoot: string;
   amountMicroUsdc: bigint;
   signature: string;
-}
-
-function decodeDepositEvent(
-  log: string,
-): Omit<RebuiltLeaf, "signature"> | null {
-  const prefix = "Program data: ";
-  if (!log.startsWith(prefix)) return null;
-  const raw = Buffer.from(log.slice(prefix.length), "base64");
-  if (raw.length < 8) return null;
-  if (!raw.subarray(0, 8).equals(DEPOSIT_EVENT_DISCRIMINATOR)) return null;
-
-  let offset = 8;
-  const leafIndex = raw.readUInt32LE(offset);
-  offset += 4;
-  const commitment = "0x" + raw.subarray(offset, offset + 32).toString("hex");
-  offset += 32;
-  const newRoot = "0x" + raw.subarray(offset, offset + 32).toString("hex");
-  offset += 32;
-  const amountMicroUsdc = raw.readBigUInt64LE(offset);
-  return { leafIndex, commitment, newRoot, amountMicroUsdc };
 }
 
 export async function collectDepositEvents(
@@ -73,7 +48,7 @@ export async function collectDepositEvents(
     for (let j = 0; j < txs.length; j++) {
       const tx = txs[j];
       for (const log of tx?.meta?.logMessages ?? []) {
-        const event = decodeDepositEvent(log);
+        const event = decodeDepositEventLog(log);
         if (event) leaves.push({ ...event, signature: batch[j] });
       }
     }

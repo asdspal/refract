@@ -170,3 +170,17 @@ Next: Milestone 1 (Step 1.1).
 - [x] `tests/integration/optimistic-credit.test.ts` — 5/5 pass: $5 cap + 420k bonus, issue latency
       **~335ms** (<= 400ms), duplicate 409, revocation blocks spend, 80% breaker, route 200
 - [x] `tsc` clean; git commit
+
+### ✅ Step 2.3: SolanaAnchorDepositWorker & `GET /api/v1/zkapi/tree` — COMPLETE
+
+- [x] `src/lib/zkapi/depositEvent.ts` — shared Anchor `DepositCommitted` log decoder
+- [x] `src/lib/workers/solanaDepositWorker.ts` — polls pending deposits, calls Aurora status,
+      on SUCCESS → `deposit_and_commit` + `rebalance_defi_float`, upserts `merkle_leaves`,
+      upgrades the optimistic session (`is_optimistic=false`, 10 bps fast-fill fee, full balance),
+      invalidates the Merkle cache; on REFUNDED/FAILED → revokes optimistic credit
+- [x] `GET /api/v1/zkapi/tree` — leaves + current root + next index, Upstash cache (60s),
+      invalidated by the worker
+- [x] `tests/integration/deposit-worker-and-tree.test.ts` — 2/2 pass: SUCCESS settlement,
+      on-chain root == circomlibjs root, session upgraded (9.99M principal / 10.41M remaining),
+      tree endpoint **86ms**; REFUNDED revokes the session
+- [x] `tsc` clean; git commit
