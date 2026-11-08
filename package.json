@@ -13,11 +13,11 @@
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:e2e": "playwright test",
-    "a11y": "node scripts/verify_contrast.mjs blueprint/design-tokens.json",
+    "a11y": "node scripts/verify_contrast.mjs src/config/design-tokens.json",
     "db:migrate:up": "tsx scripts/migrate.ts up",
     "db:migrate:down": "tsx scripts/migrate.ts down",
     "db:rebuild-from-chain": "tsx scripts/rebuild_from_chain.ts",
-    "spike": "tsx blueprint/spikes/verify_stack.ts"
+    "spike": "tsx src/lib/zkapi/spike.ts"
   },
   "dependencies": {
     "@aurora-is-near/intents-connect": "7.24.0",

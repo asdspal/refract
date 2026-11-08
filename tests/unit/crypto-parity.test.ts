@@ -9,7 +9,7 @@ import {
   serializeG2,
   serializeGroth16ProofForSolana,
 } from "../../src/lib/zkapi/bn254Serializer";
-import { runHourOneSpike } from "../../blueprint/spikes/verify_stack";
+import { runHourOneSpike } from "../../src/lib/zkapi/spike";
 
 describe("BN254 serialization", () => {
   it("encodes field elements as 32-byte big-endian", () => {

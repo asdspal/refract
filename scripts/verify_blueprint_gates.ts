@@ -1,11 +1,11 @@
 /**
  * Phase 8 verification gates. Runs each check, writes
- * blueprint/reviews/verification.md, and exits non-zero on any blocker.
+ * reports/verification.md, and exits non-zero on any blocker.
  *
  * Run: npx tsx scripts/verify_blueprint_gates.ts
  */
 import { execFileSync } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { closePool, query } from "../src/db/index";
 
@@ -61,7 +61,7 @@ function checkOpenApi() {
   try {
     execFileSync(
       "npx",
-      ["--yes", "@redocly/cli@latest", "lint", "blueprint/openapi.yaml"],
+      ["--yes", "@redocly/cli@latest", "lint", "src/config/openapi.yaml"],
       { cwd: root, timeout: 180_000, stdio: "pipe" },
     );
     record(2, "OpenAPI 3.1 specification", true, "lint passed with 0 errors");
@@ -79,8 +79,8 @@ function readCsvIds(path: string): string[] {
 
 function checkTraceability() {
   const expected = Array.from({ length: 18 }, (_, i) => `R-${String(i + 1).padStart(3, "0")}`);
-  const requirements = new Set(readCsvIds("blueprint/requirements.csv"));
-  const traceability = new Set(readCsvIds("blueprint/traceability.csv"));
+  const requirements = new Set(readCsvIds("src/config/requirements.csv"));
+  const traceability = new Set(readCsvIds("src/config/traceability.csv"));
   const missingReq = expected.filter((id) => !requirements.has(id));
   const missingTrace = expected.filter((id) => !traceability.has(id));
   const orphans = [...requirements, ...traceability].filter(
@@ -144,7 +144,7 @@ function checkContrast() {
   try {
     const out = execFileSync(
       "node",
-      ["scripts/verify_contrast.mjs", "blueprint/design-tokens.json"],
+      ["scripts/verify_contrast.mjs", "src/config/design-tokens.json"],
       { cwd: root, encoding: "utf8", timeout: 30_000 },
     );
     record(
@@ -189,7 +189,7 @@ function checkVersions() {
 
 function checkCapacity() {
   try {
-    const out = execFileSync("python3", ["blueprint/models/load_and_cost.py"], {
+    const out = execFileSync("python3", ["scripts/capacity_model.py"], {
       cwd: root,
       encoding: "utf8",
       timeout: 30_000,
@@ -257,7 +257,8 @@ async function main() {
     "",
   ].join("\n");
 
-  writeFileSync(resolve(root, "blueprint/reviews/verification.md"), report);
+  mkdirSync(resolve(root, "reports"), { recursive: true });
+  writeFileSync(resolve(root, "reports/verification.md"), report);
   console.log("");
   console.log(report.split("\n").slice(-12).join("\n"));
   await closePool();

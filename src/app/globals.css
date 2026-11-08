@@ -1,5 +1,5 @@
 :root {
-  /* Design tokens — blueprint/design-tokens.json */
+  /* Design tokens — src/config/design-tokens.json */
   --bg-canvas: #090a0f;
   --bg-surface: #11141e;
   --bg-elevated: #181c2a;

@@ -1,0 +1,19 @@
+req_id,priority,title
+R-001,P0,35+-chain persistent deposit quotes via Aurora Intents
+R-002,P0,Confidential Intents routing
+R-003,P0,Automatic Solana vault settlement
+R-004,P0,Local Poseidon note with .json backup
+R-005,P0,Browser Groth16 BN254 proof generation
+R-006,P0,On-chain Groth16 verification and nullifier PDA
+R-007,P0,Dual-scheme x402 v2 gateway
+R-008,P0,Schnorr-signed runtime keys and receipts
+R-009,P0,90/10 Solana DeFi yield float
+R-010,P0,Sub-400ms optimistic credit
+R-011,P1,Reverse-intent cross-chain refunds
+R-012,P0,AI chat playground
+R-013,P1,Agent spend policy firewall
+R-014,P1,30 bps Aurora integrator fee
+R-015,P1,Double-blind privacy inspector
+R-016,P0,Sub-15ms runtime-key verification
+R-017,P1,WCAG 2.2 AA accessibility
+R-018,P3,No native mobile binaries or governance token

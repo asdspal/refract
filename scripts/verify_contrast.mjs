@@ -34,7 +34,7 @@ export const PAIRS = [
   { fg: "border.interactive", bg: "bg.canvas", min: 3.0 },
 ];
 
-export function loadTokens(path = "blueprint/design-tokens.json") {
+export function loadTokens(path = "src/config/design-tokens.json") {
   const json = JSON.parse(readFileSync(path, "utf8"));
   const colors = {};
   for (const [name, pathParts] of Object.entries(TOKEN_PATHS)) {
@@ -83,7 +83,7 @@ export function verifyContrast(colors) {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const path = process.argv[2] || "blueprint/design-tokens.json";
+  const path = process.argv[2] || "src/config/design-tokens.json";
   const results = verifyContrast(loadTokens(path));
   let failed = 0;
   for (const r of results) {
