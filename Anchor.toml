@@ -1,23 +1,15 @@
-[toolchain]
-
-[toolchain.solana]
-version = "2.0.18"
-
 [features]
 resolution = true
 skip-lint = false
 
 [programs.localnet]
-refract_vault = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+refract_vault = "HyeAVxJxt37ndAE2LJBKJ36j8vKLv6PezvwxA2NsmhvH"
 
 [programs.devnet]
-refract_vault = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+refract_vault = "HyeAVxJxt37ndAE2LJBKJ36j8vKLv6PezvwxA2NsmhvH"
 
 [programs.mainnet]
-refract_vault = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
-
-[registry]
-url = "https://api.apr.dev"
+refract_vault = "HyeAVxJxt37ndAE2LJBKJ36j8vKLv6PezvwxA2NsmhvH"
 
 [provider]
 cluster = "Localnet"
@@ -28,6 +20,3 @@ test = "npx vitest run tests/anchor"
 
 [test]
 startup_wait = 5000
-
-[test.validator]
-url = "https://api.mainnet-beta.solana.com"

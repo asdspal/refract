@@ -1,9 +1,14 @@
 # Refract — Implementation Progress Log
 
-Environment note: this machine has Node 26, Rust 1.96, Docker, and system Chrome.
-Solana CLI / Anchor CLI / Circom are NOT installed, so on-chain Devnet deployment
-in Steps 0.1 and 1.x is toolchain-gated; TypeScript, Rust (`cargo check`), Docker
-Postgres/Redis, and Playwright runs are executed.
+Toolchain now installed (user-space, no sudo):
+- Solana CLI 4.3.2 + cargo-build-sbf 4.4.0 + platform-tools v1.57 (`~/.local/share/solana`)
+- Anchor CLI 1.2.2 (`~/.cargo/bin/anchor`)
+- Circom 2.2.3 (`~/.cargo/bin/circom`; v2.2.2 prebuilt unavailable)
+- `circomlib` 2.0.5 npm dev dependency
+- Docker Postgres 16.15 on `localhost:5433`; system Chrome for Playwright
+
+Devnet faucet is IP rate-limited in this environment, so Step 0.1 deployment was
+verified against a local `solana-test-validator` instead.
 
 ## Milestone 0: Foundation & Validation
 
@@ -15,7 +20,9 @@ Postgres/Redis, and Playwright runs are executed.
 - [x] `ping_vault` scaffold instruction + `VaultPinged` event (`cargo check` passes)
 - [x] `.env.example` (22 variables) and `.env`
 - [x] `tests/unit/env-and-versions.test.ts`, `tests/anchor/scaffold.test.ts` — 9/9 pass
-- [ ] Toolchain-gated: `anchor build` / Devnet deployment (no Solana CLI)
+- [x] `anchor build` succeeds; program deployed and verified on local `solana-test-validator`
+      (Program ID `HyeAVxJxt37ndAE2LJBKJ36j8vKLv6PezvwxA2NsmhvH`, Owner BPFLoaderUpgrade, 52,296 bytes)
+- [ ] Devnet deploy blocked: public faucet rate-limited (retry from a new IP / web faucet)
 - [x] Git commit `chore(init): step 0.1 monorepo, pinned deps and anchor scaffold`
 
 Deviation: `npm audit` reports transitive vulnerabilities from the Aurora swap
