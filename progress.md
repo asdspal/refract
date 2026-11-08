@@ -280,3 +280,16 @@ Next: Milestone 1 (Step 1.1).
 - [x] `tests/e2e/studio-deposit.spec.ts` — 4/4 at 1440px & 375px: backup download, optimistic banner,
       90/10 telemetry, 0 axe violations
 - [x] Git commit
+
+### ✅ Step 4.2: `/playground`, `/merchant`, Inspector & Refund Modal — COMPLETE
+
+- [x] `X402AiPlaygroundCard` — model select, spend-cap input, private x402 chat,
+      "Simulate $2.50 Prompt-Injection Attack" with a real `role="alert"` firewall banner
+- [x] `DoubleBlindInspectorDrawer` — 3 accessible tabs (Visual Proof / Raw HTTP Headers / SDK),
+      live quote ID, nullifier hash, receipt, `Wallet Bytes Sent: 0 BYTES`
+- [x] `CrossChainRefundModal` — `role="dialog"`, Escape close + focus restore, reverse Aurora refund
+- [x] `MerchantTreasuryDashboard` — 90/10 DeFi treasury cards + `[UNLINKABLE ZK]` receipt ledger
+- [x] `tests/e2e/playground-and-merchant.spec.ts` — 6/6 at 1440px & 375px: chat + receipt,
+      inspector, $2.50 block, refund `PROCESSING_REFUND`, 0 axe violations
+- [x] Full Playwright suite: **16/16** (a11y + studio + playground/merchant)
+- [x] Git commit
