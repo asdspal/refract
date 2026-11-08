@@ -33,8 +33,14 @@ describe("environment register", () => {
     .filter((l) => l.includes("=") && !l.trimStart().startsWith("#"))
     .map((l) => l.split("=")[0].trim());
 
-  it("documents exactly the 22 required variables", () => {
-    expect(keys).toHaveLength(22);
+  it("documents exactly the 23 required variables", () => {
+    expect(keys).toHaveLength(23);
+  });
+
+  it("exposes the devnet deployer pubkey for faucet funding", () => {
+    expect(envExample).toContain(
+      "SOLANA_DEPLOYER_PUBKEY=Eu5JuwNr6FjHAZjCtuXMZnhY9Qk8tTrQuVHtwmTzyp3F",
+    );
   });
 
   it("includes all security-critical variables", () => {
