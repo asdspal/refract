@@ -158,6 +158,23 @@ describe("Aurora quote persistence", () => {
   });
 });
 
+const hasStudioKey = (process.env.AURORA_STUDIO_JWT_TOKEN ?? "").split(".").length === 3;
+const describeConfidential = hasStudioKey ? describe : describe.skip;
+
+describeConfidential("live Aurora Confidential Intents contract", () => {
+  it(
+    "creates a real confidential quote with the Studio API key",
+    async () => {
+      const quote = await createConfidentialDepositQuote(params());
+      expect(quote.depositAddress).toBeTruthy();
+      expect(quote.confidentialMode).toBe(true);
+      expect(quote.expectedSolanaMicroUsdc).toBeGreaterThan(0);
+      expect(quote.integratorFeeBps).toBe(30);
+    },
+    30_000,
+  );
+});
+
 describe("live Aurora 1Click contract", () => {
   it(
     "creates a real public quote with a deposit address",

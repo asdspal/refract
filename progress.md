@@ -201,3 +201,13 @@ Next: Milestone 1 (Step 1.1).
 - [x] Git commit
 
 **Milestone 2 COMPLETE.** Next: Milestone 3 (client ZK prover, x402 gateway, Schnorr receipts, agent firewall).
+
+### Aurora credential status (2026-11-08)
+
+- Public 1Click quotes: **working unauthenticated** (201) with the +25 bps penalty.
+- The supplied 36-char key is **not a 1Click Partner JWT**: 1Click returns `401 Invalid token`
+  whether sent as `X-API-Key` or `Authorization: Bearer` (verified live). It is likely an Aurora
+  Studio/widget API key → belongs in `NEXT_PUBLIC_AURORA_WIDGET_API_KEY`.
+- Client is now guarded: only a JWT-shaped `AURORA_STUDIO_JWT_TOKEN` (3 dot-separated parts) is
+  attached to 1Click; otherwise public quotes continue to work. Confidential live quotes remain
+  pending a valid Partner JWT from the 1Click Partner Dashboard.

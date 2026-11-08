@@ -55,11 +55,20 @@ export interface QuoteDeps {
   quoteFn?: (request: QuoteRequest) => Promise<QuoteResponse>;
 }
 
+/** 1Click Speaker/Partner credentials are JWTs (three dot-separated parts). */
+export function isPartnerJwt(value: string | undefined): boolean {
+  return Boolean(value) && (value as string).split(".").length === 3;
+}
+
 export function configureOneClickClient(): void {
   OpenAPI.BASE =
     process.env.AURORA_ONE_CLICK_BASE_URL ?? DEFAULT_ONE_CLICK_BASE_URL;
-  const jwt = process.env.AURORA_STUDIO_JWT_TOKEN;
-  OpenAPI.TOKEN = jwt && jwt.length > 0 ? jwt : undefined;
+  const apiKey = process.env.AURORA_STUDIO_JWT_TOKEN;
+  // Only attach a Partner JWT to 1Click. Raw Aurora Studio / widget API keys
+  // are not valid 1Click credentials and cause 401 "Invalid token".
+  const usable = isPartnerJwt(apiKey);
+  OpenAPI.TOKEN = usable ? apiKey : undefined;
+  OpenAPI.HEADERS = usable ? { "X-API-Key": apiKey as string } : undefined;
 }
 
 function integratorFeeBps(): number {
@@ -92,7 +101,7 @@ export function buildQuoteRequest(params: QuoteParams): QuoteRequest {
 
   const jwt = process.env.AURORA_STUDIO_JWT_TOKEN;
   const confidentialMode = params.confidentialMode ?? true;
-  if (confidentialMode && !jwt) {
+  if (confidentialMode && !isPartnerJwt(jwt)) {
     throw new AuroraQuoteError(
       "ERR_CONFIDENTIAL_AUTH_REQUIRED",
       "Aurora Confidential Intents requires AURORA_STUDIO_JWT_TOKEN. Set it or pass confidentialMode=false for a public quote.",
