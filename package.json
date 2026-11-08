@@ -1,0 +1,57 @@
+{
+  "name": "refract",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Refract - cross-chain yield-bearing zkAPI clearinghouse and x402 facilitator on Solana",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:e2e": "playwright test",
+    "a11y": "node scripts/verify_contrast.mjs blueprint/design-tokens.json",
+    "db:migrate:up": "tsx scripts/migrate.ts up",
+    "db:migrate:down": "tsx scripts/migrate.ts down",
+    "db:rebuild-from-chain": "tsx scripts/rebuild_from_chain.ts",
+    "spike": "tsx blueprint/spikes/verify_stack.ts"
+  },
+  "dependencies": {
+    "@aurora-is-near/intents-connect": "7.24.0",
+    "@aurora-is-near/intents-swap-widget": "7.24.0",
+    "@defuse-protocol/one-click-sdk-typescript": "0.1.26",
+    "@solana/spl-token": "0.4.9",
+    "@solana/web3.js": "1.99.0",
+    "@upstash/redis": "1.34.3",
+    "circomlibjs": "0.1.7",
+    "next": "15.2.4",
+    "pg": "8.13.1",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "snarkjs": "0.7.6",
+    "tweetnacl": "1.0.3",
+    "zod": "3.24.1",
+    "zustand": "5.0.2"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.1",
+    "@playwright/test": "1.49.0",
+    "@types/node": "22.10.2",
+    "@types/pg": "8.11.10",
+    "@types/react": "19.0.2",
+    "@types/react-dom": "19.0.2",
+    "tsx": "4.19.2",
+    "typescript": "5.7.3",
+    "vitest": "2.1.8"
+  },
+  "overrides": {
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "engines": {
+    "node": ">=20.18.0"
+  }
+}

@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+.env
+.env.local
+*.log
+target/
+test-ledger/
+.solana/
+.DS_Store
+coverage/
+playwright-report/
+test-results/
+public/circuits/*.wasm
+public/circuits/*.zkey
