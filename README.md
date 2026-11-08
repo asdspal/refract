@@ -107,5 +107,4 @@ tests/                        unit, integration, anchor, security, ai, load, e2e
 - Live confidential Aurora quotes require a valid 1Click Partner JWT.
 - Local `x402` verification p95 is ~44ms (local → Upstash); the 15ms NFR must be measured
   on Vercel colocated with Upstash/Neon.
-- Mainnet-Beta deployment and the funded `$15–$25` USDC micro-liquidity demo require
-  operator SOL/USDC; Devnet is fully verified.
+- This build targets **Solana Devnet** only.

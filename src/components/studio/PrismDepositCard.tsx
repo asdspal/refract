@@ -7,13 +7,13 @@ const DEMO_REFUND_ADDRESS = "0x71C95911E9a5D330f4D621842EC243EE1343292e";
 
 const ASSETS = [
   {
-    label: "Base Mainnet — USDC",
+    label: "Base — USDC",
     chain: "base",
     assetId:
       "nep141:base-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913.omft.near",
   },
   {
-    label: "Arbitrum One — USDC",
+    label: "Arbitrum — USDC",
     chain: "arbitrum",
     assetId:
       "nep141:arb-0xaf88d065e77c8cc2239327c5edb3a432268e5831.omft.near",

@@ -8,13 +8,13 @@ import {
 
 const DESTINATIONS = [
   {
-    label: "Arbitrum One — USDC",
+    label: "Arbitrum — USDC",
     chain: "arbitrum",
     assetId:
       "nep141:arb-0xaf88d065e77c8cc2239327c5edb3a432268e5831.omft.near",
   },
   {
-    label: "Base Mainnet — USDC",
+    label: "Base — USDC",
     chain: "base",
     assetId:
       "nep141:base-0x833589fcd6edb4c7c32d4f71b54bda02913.omft.near",
