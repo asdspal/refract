@@ -67,13 +67,13 @@ export function DefiFloatTelemetryCard() {
             90% Kamino kUSDC Reserve:{" "}
             {stats
               ? `$${(stats.kaminoStakedMicroUsdc / 1_000_000).toFixed(2)} (${(stats.currentApyBps / 100).toFixed(2)}% APY)`
-              : "$22.50 (9.40% APY)"}
+              : "$225.00 (9.40% APY)"}
           </li>
           <li>
             10% Liquid Optimistic PDA:{" "}
             {stats
               ? `$${(stats.liquidReserveMicroUsdc / 1_000_000).toFixed(2)}`
-              : "$2.50"}
+              : "$25.00"}
           </li>
           <li>
             Active AI Credit Bonus:{" "}

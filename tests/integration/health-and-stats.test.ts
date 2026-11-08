@@ -17,7 +17,7 @@ beforeAll(async () => {
     `INSERT INTO defi_vault_snapshots
        (total_pool_micro_usdc, kamino_staked_micro_usdc, liquid_reserve_micro_usdc,
         optimistic_utilized_micro_usdc, current_apy_bps, subsidy_bonus_bps, solana_slot)
-     VALUES (25000000, 22500000, 2500000, 0, 940, 840, 123456789)`,
+     VALUES (250000000, 225000000, 25000000, 0, 940, 840, 123456789)`,
   );
 });
 
@@ -43,9 +43,9 @@ describe("GET /api/v1/defi/vault-stats", () => {
     expect(res.status).toBe(200);
     expect(res.headers.get("X-Correlation-Id")).toMatch(/^req_/);
     const body = await res.json();
-    expect(body.totalPoolMicroUsdc).toBe(25000000);
-    expect(body.kaminoStakedMicroUsdc).toBe(22500000);
-    expect(body.liquidReserveMicroUsdc).toBe(2500000);
+    expect(body.totalPoolMicroUsdc).toBe(250000000);
+    expect(body.kaminoStakedMicroUsdc).toBe(225000000);
+    expect(body.liquidReserveMicroUsdc).toBe(25000000);
     expect(body.currentApyBps).toBe(940);
     expect(body.subsidyBonusBps).toBe(840);
     expect(body.kaminoStakedMicroUsdc / body.totalPoolMicroUsdc).toBeCloseTo(0.9, 5);

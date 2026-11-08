@@ -19,9 +19,9 @@ const CREDIT = {
 };
 
 const STATS = {
-  totalPoolMicroUsdc: 25_000_000,
-  kaminoStakedMicroUsdc: 22_500_000,
-  liquidReserveMicroUsdc: 2_500_000,
+  totalPoolMicroUsdc: 250_000_000,
+  kaminoStakedMicroUsdc: 225_000_000,
+  liquidReserveMicroUsdc: 25_000_000,
   optimisticUtilizedMicroUsdc: 0,
   currentApyBps: 940,
   subsidyBonusBps: 840,

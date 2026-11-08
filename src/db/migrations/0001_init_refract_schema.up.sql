@@ -130,5 +130,5 @@ ON CONFLICT (endpoint_pattern) DO NOTHING;
 INSERT INTO defi_vault_snapshots
     (total_pool_micro_usdc, kamino_staked_micro_usdc, liquid_reserve_micro_usdc,
      optimistic_utilized_micro_usdc, current_apy_bps, subsidy_bonus_bps, solana_slot)
-SELECT 25000000, 22500000, 2500000, 0, 940, 840, 0
+SELECT 250000000, 225000000, 25000000, 0, 940, 840, 0
 WHERE NOT EXISTS (SELECT 1 FROM defi_vault_snapshots);

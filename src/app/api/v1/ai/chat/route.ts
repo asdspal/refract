@@ -4,6 +4,7 @@ import { runInference } from "@/lib/ai/inferenceRouter";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const Schema = z.object({
   model: z.enum(["gpt-4o-mini", "claude-3-5-sonnet", "fireworks"]).optional().default("gpt-4o-mini"),

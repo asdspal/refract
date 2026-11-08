@@ -61,7 +61,11 @@ export function CrossChainRefundModal({
     setError(null);
     setStatus(null);
     try {
-      const token = store.runtimeKey ?? readRuntimeKey() ?? "rk_live_demo";
+      const token = store.runtimeKey ?? readRuntimeKey();
+      if (!token) {
+        setError("No active Runtime Key. Complete the Studio deposit first.");
+        return;
+      }
       const dest = DESTINATIONS[destination];
       const res = await fetch("/api/v1/intents/refund", {
         method: "POST",

@@ -282,12 +282,13 @@ export function withX402Gate(
         scheme,
         verifyDurationMs,
       });
-    } catch {
+    } catch (err) {
       await rollbackRuntimeKeyCharge(auth.sessionId, price);
+      const reason = err instanceof Error ? err.message : String(err);
       return errorResponse(
         502,
         "ERR_UPSTREAM_API_FAILURE",
-        "Upstream handler failed; the charge was rolled back.",
+        `Upstream handler failed; the charge was rolled back. ${reason.slice(0, 180)}`,
         correlationId,
       );
     }
@@ -308,13 +309,25 @@ export function withX402Gate(
       return response;
     }
 
-    const receipt = signUsageReceipt({
-      sessionId: auth.sessionId,
-      correlationId,
-      chargedMicroUsdc: price,
-      remainingMicroUsdc: auth.remainingMicroUsdc,
-      timestamp: Date.now(),
-    });
+    let receipt;
+    try {
+      receipt = signUsageReceipt({
+        sessionId: auth.sessionId,
+        correlationId,
+        chargedMicroUsdc: price,
+        remainingMicroUsdc: auth.remainingMicroUsdc,
+        timestamp: Date.now(),
+      });
+    } catch (err) {
+      await rollbackRuntimeKeyCharge(auth.sessionId, price).catch(() => undefined);
+      const reason = err instanceof Error ? err.message : String(err);
+      return errorResponse(
+        502,
+        "ERR_RECEIPT_SIGNING_FAILED",
+        `Receipt signing failed; the charge was rolled back. ${reason.slice(0, 160)}`,
+        correlationId,
+      );
+    }
 
     await recordReceipt({
       sessionId: auth.sessionId,

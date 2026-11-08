@@ -30,7 +30,12 @@ export const FIREWORKS_BASE_URL_DEFAULT =
 export const FIREWORKS_MODEL_DEFAULT =
   "accounts/fireworks/models/deepseek-v4p1-flash-1017";
 export const MAX_OUTPUT_TOKENS = 1024;
-const TTFT_TIMEOUT_MS = 1_500;
+// Reasoning models (DeepSeek V4.1 Flash) spend tokens on reasoning_content
+// before producing the answer; 1,024 is not enough.
+export const FIREWORKS_MAX_OUTPUT_TOKENS = 4_096;
+// Non-streaming chat completions can take several seconds; the 1.5s budget was
+// for time-to-first-token, not a full response.
+const PROVIDER_TIMEOUT_MS = 30_000;
 
 type LiveProvider = "openai" | "anthropic" | "fireworks";
 
@@ -64,7 +69,7 @@ async function fetchWithTimeout(
   init: RequestInit,
 ): Promise<Response> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), TTFT_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), PROVIDER_TIMEOUT_MS);
   try {
     return await fetch(url, { ...init, signal: controller.signal });
   } finally {
@@ -92,14 +97,27 @@ async function callOpenAICompatible(
     body: JSON.stringify({
       model,
       messages,
-      max_tokens: MAX_OUTPUT_TOKENS,
+      max_tokens:
+        provider === "fireworks"
+          ? FIREWORKS_MAX_OUTPUT_TOKENS
+          : MAX_OUTPUT_TOKENS,
+      // DeepSeek V4.1 Flash is a reasoning model; "none" skips the long
+      // chain-of-thought and answers in ~4s instead of 13-18s.
+      ...(provider === "fireworks"
+        ? { reasoning_effort: process.env.FIREWORKS_REASONING_EFFORT ?? "none" }
+        : {}),
     }),
   });
   if (!res.ok) throw new Error(`${provider} HTTP ${res.status}`);
   const data = (await res.json()) as {
-    choices?: Array<{ message?: { content?: string } }>;
+    choices?: Array<{
+      message?: { content?: string | null; reasoning_content?: string | null };
+    }>;
   };
-  const reply = data.choices?.[0]?.message?.content;
+  const message = data.choices?.[0]?.message;
+  const content = message?.content?.trim();
+  const reasoning = message?.reasoning_content?.trim();
+  const reply = content || reasoning;
   if (!reply) throw new Error(`${provider} returned an empty completion`);
   return { reply, model, provider };
 }
@@ -170,10 +188,11 @@ export async function runInference(
   params: InferenceParams,
 ): Promise<InferenceResult> {
   const requested = params.model ?? "gpt-4o-mini";
+  const forceLocal = process.env.OPENAI_API_KEY === "sk-test-local";
   const liveKeys = (["openai", "anthropic", "fireworks"] as LiveProvider[]).some(
     (provider) => keyFor(provider),
   );
-  if (!liveKeys) return localResult(requested, params.messages);
+  if (forceLocal || !liveKeys) return localResult(requested, params.messages);
 
   const chains: Record<AiModel, LiveProvider[]> = {
     "gpt-4o-mini": ["openai", "anthropic", "fireworks"],

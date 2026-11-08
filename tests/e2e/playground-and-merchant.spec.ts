@@ -2,9 +2,9 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 const STATS = {
-  totalPoolMicroUsdc: 25_000_000,
-  kaminoStakedMicroUsdc: 22_500_000,
-  liquidReserveMicroUsdc: 2_500_000,
+  totalPoolMicroUsdc: 250_000_000,
+  kaminoStakedMicroUsdc: 225_000_000,
+  liquidReserveMicroUsdc: 25_000_000,
   optimisticUtilizedMicroUsdc: 0,
   currentApyBps: 940,
   subsidyBonusBps: 840,
@@ -92,12 +92,12 @@ test("private x402 chat, firewall block, inspector and refund", async ({ page })
   await page.getByRole("tab", { name: "Raw HTTP 402 Headers" }).click({ force: true });
   await expect(page.getByText(/X-ZKAPI-RECEIPT:/)).toBeVisible();
 
-  await page.getByRole("button", { name: "Simulate $2.50 Prompt-Injection Attack" }).click();
-  const firewallAlert = page
-    .getByRole("alert")
-    .filter({ hasText: "ERR_SPEND_CAP_EXCEEDED" });
-  await expect(firewallAlert).toBeVisible();
-  await expect(firewallAlert).toContainText("0.00 USDC deducted");
+  await page.getByRole("button", { name: /Demo Firewall/ }).click();
+  const firewallNotice = page
+    .getByRole("status")
+    .filter({ hasText: "Firewall demo passed" });
+  await expect(firewallNotice).toBeVisible();
+  await expect(firewallNotice).toContainText("0.00 USDC deducted");
 
   await page.getByRole("button", { name: /Close Note/ }).click();
   const dialog = page.getByRole("dialog");

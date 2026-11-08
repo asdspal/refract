@@ -13,11 +13,12 @@ function paymentSignature(token: string): string {
 }
 
 export function X402AiPlaygroundCard() {
-  const [model, setModel] = useState("gpt-4o-mini");
+  const [model, setModel] = useState("fireworks");
   const [cap, setCap] = useState("0.10");
   const [prompt, setPrompt] = useState("Audit Kamino vault authority & utilization.");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [firewallDemo, setFirewallDemo] = useState<string | null>(null);
   const [reply, setReply] = useState<string | null>(null);
   const [charged, setCharged] = useState<number | null>(null);
   const [remaining, setRemaining] = useState<number | null>(null);
@@ -34,9 +35,14 @@ export function X402AiPlaygroundCard() {
 
   async function runChat(simulateAttack: boolean) {
     setError(null);
+    setFirewallDemo(null);
     setBusy(true);
     try {
-      const token = store.runtimeKey ?? readRuntimeKey() ?? "rk_live_demo";
+      const token = store.runtimeKey ?? readRuntimeKey();
+      if (!token) {
+        setError("No active Runtime Key. Complete the Studio deposit first.");
+        return;
+      }
       const headers: Record<string, string> = {
         "content-type": "application/json",
         "PAYMENT-SIGNATURE": paymentSignature(token),
@@ -55,9 +61,15 @@ export function X402AiPlaygroundCard() {
 
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        setError(
-          `${body.code ?? "ERR_X402"}: ${body.message ?? "Payment blocked."}`,
-        );
+        if (simulateAttack && body.code === "ERR_SPEND_CAP_EXCEEDED") {
+          setFirewallDemo(
+            `Firewall demo passed — a simulated $2.50 request was blocked by the $${cap}/req cap. 0.00 USDC deducted (HTTP 403 ERR_SPEND_CAP_EXCEEDED).`,
+          );
+        } else {
+          setError(
+            `${body.code ?? "ERR_X402"}: ${body.message ?? "Payment blocked."}`,
+          );
+        }
         return;
       }
 
@@ -138,13 +150,23 @@ export function X402AiPlaygroundCard() {
           onClick={() => runChat(true)}
           disabled={busy}
         >
-          Simulate $2.50 Prompt-Injection Attack
+          Demo Firewall: Simulate $2.50 Attack (expected block)
         </button>
+        <p className="muted" style={{ margin: 0, fontSize: 13 }}>
+          The red button is a demo control: it should return HTTP 403 with 0.00
+          USDC deducted. Use the blue button for a real paid call.
+        </p>
       </div>
 
       {error && (
         <p role="alert" className="alert">
           {error}
+        </p>
+      )}
+
+      {firewallDemo && (
+        <p role="status" className="success">
+          {firewallDemo}
         </p>
       )}
 

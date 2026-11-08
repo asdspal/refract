@@ -28,9 +28,9 @@ export function MerchantTreasuryDashboard() {
     };
   }, []);
 
-  const total = stats ? stats.totalPoolMicroUsdc / 1_000_000 : 25;
-  const staked = stats ? stats.kaminoStakedMicroUsdc / 1_000_000 : 22.5;
-  const liquid = stats ? stats.liquidReserveMicroUsdc / 1_000_000 : 2.5;
+  const total = stats ? stats.totalPoolMicroUsdc / 1_000_000 : 250;
+  const staked = stats ? stats.kaminoStakedMicroUsdc / 1_000_000 : 225;
+  const liquid = stats ? stats.liquidReserveMicroUsdc / 1_000_000 : 25;
   const apy = stats ? stats.currentApyBps / 100 : 9.4;
 
   return (
