@@ -1,6 +1,6 @@
 # Refract — Verification Report
 
-Generated: 2026-11-08T12:43:26.478Z
+Generated: 2026-11-08T12:50:03.177Z
 
 - ✅ PASS — Check 1: PostgreSQL 16 schema & indexes (6 tables + 8 indexes present)
 - ✅ PASS — Check 2: OpenAPI 3.1 specification (lint passed with 0 errors)

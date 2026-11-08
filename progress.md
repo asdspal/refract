@@ -323,3 +323,11 @@ Next: Milestone 1 (Step 1.1).
   runtime-key mint, worker settlement.
 - **Operator-only external gates:** Vercel deployment, Mainnet-Beta vault + `$15–$25` USDC
   micro-liquidity, 1Click Partner JWT for confidential live quotes, demo video + Devpost submission.
+
+## Final regression (post-release)
+
+- Vitest: **88 passed / 1 skipped** (22 files). The skipped test is the live
+  confidential Aurora quote, pending a valid 1Click Partner JWT.
+- Playwright: **24 passed** (12 per viewport; a11y, studio, playground/merchant, prod-smoke).
+- Phase-8 gates: **8/8 PASS**, verification.md status `READY`.
+- Release tag: `v2.0.0-hackathon-release`.
