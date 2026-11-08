@@ -211,3 +211,15 @@ Next: Milestone 1 (Step 1.1).
 - Client is now guarded: only a JWT-shaped `AURORA_STUDIO_JWT_TOKEN` (3 dot-separated parts) is
   attached to 1Click; otherwise public quotes continue to work. Confidential live quotes remain
   pending a valid Partner JWT from the 1Click Partner Dashboard.
+
+## Milestone 3: Client ZK Prover, x402 Gateway, Schnorr Receipts & Agent Firewall
+
+### ✅ Step 3.1: Client Note Vault & Prover — COMPLETE
+
+- [x] `clientNoteVault.ts` — 31-byte nullifier/trapdoor, Poseidon commitment/nullifier/session hashes,
+      AES-GCM-256 encrypt/decrypt, IndexedDB (in-memory fallback in Node), `.json` backup export/import/download
+- [x] `merklePathBuilder.ts` — depth-20 sibling path from public leaves
+- [x] `proverClient.ts` + `prover.worker.ts` — snarkjs fullProve, 256-byte G1-negated proof hex, WebWorker path
+- [x] `tests/unit/client-note-and-worker.test.ts` — 4/4: AES roundtrip, backup import/export,
+      zero secret bytes in API payload, proof **1643ms** (<= 2200ms), proof length 514
+- [x] `tsc` clean; git commit
