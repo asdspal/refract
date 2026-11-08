@@ -7,7 +7,8 @@ export type RuntimeKeyErrorCode =
   | "ERR_RUNTIME_SESSION_INACTIVE"
   | "ERR_SPEND_CAP_EXCEEDED"
   | "ERR_DAILY_CAP_EXCEEDED"
-  | "ERR_INSUFFICIENT_NOTE_BALANCE";
+  | "ERR_INSUFFICIENT_NOTE_BALANCE"
+  | "ERR_OPTIMISTIC_SESSION_REVOKED";
 
 export class SpendPolicyError extends Error {
   readonly code: RuntimeKeyErrorCode;
@@ -70,6 +71,12 @@ function policyErrorFor(code: string): SpendPolicyError {
         "This Runtime Key is closed, expired, or revoked.",
         403,
       );
+    case "ERR_OPTIMISTIC_SESSION_REVOKED":
+      return new SpendPolicyError(
+        code,
+        "Optimistic credit session was revoked because the origin swap failed or was refunded.",
+        403,
+      );
     case "ERR_SPEND_CAP_EXCEEDED":
       return new SpendPolicyError(
         code,
@@ -113,6 +120,9 @@ async function loadSession(runtimeKeyHash: string): Promise<SessionRow | null> {
 }
 
 function assertPolicyAllows(session: SessionRow, requested: number): void {
+  if (session.status === "REVOKED") {
+    throw policyErrorFor("ERR_OPTIMISTIC_SESSION_REVOKED");
+  }
   if (session.status !== "ACTIVE" || session.expired) {
     throw policyErrorFor("ERR_RUNTIME_SESSION_INACTIVE");
   }
@@ -201,6 +211,7 @@ local now = tonumber(ARGV[2])
 if redis.call('EXISTS', key) == 0 then return {'MISS'} end
 local status = redis.call('HGET', key, 'status')
 local expires = tonumber(redis.call('HGET', key, 'expires_at') or '0')
+if status == 'REVOKED' then return {'ERR_OPTIMISTIC_SESSION_REVOKED'} end
 if status ~= 'ACTIVE' or expires <= now then return {'ERR_RUNTIME_SESSION_INACTIVE'} end
 if amount > tonumber(redis.call('HGET', key, 'max_per_request')) then return {'ERR_SPEND_CAP_EXCEEDED'} end
 local spent = tonumber(redis.call('HGET', key, 'spent_today'))
@@ -267,6 +278,9 @@ async function authorizeRedis(
     if (String(result[0]) === "MISS") {
       const session = await loadSession(runtimeKeyHash);
       if (!session) throw policyErrorFor("ERR_INVALID_RUNTIME_KEY");
+      if (session.status === "REVOKED") {
+        throw policyErrorFor("ERR_OPTIMISTIC_SESSION_REVOKED");
+      }
       if (session.status !== "ACTIVE" || session.expired) {
         throw policyErrorFor("ERR_RUNTIME_SESSION_INACTIVE");
       }
@@ -307,13 +321,17 @@ async function authorizeRedis(
 }
 
 export async function invalidateRuntimeKeyCache(
-  rawTokenOrHash: string,
+  rawToken: string,
+): Promise<void> {
+  await invalidateRuntimeKeyCacheByHash(hashRuntimeKey(rawToken));
+}
+
+export async function invalidateRuntimeKeyCacheByHash(
+  runtimeKeyHash: string,
 ): Promise<void> {
   const redis = getRedis();
   if (!redis) return;
-  await redis
-    .del(REDIS_KEY_PREFIX + hashRuntimeKey(rawTokenOrHash))
-    .catch(() => undefined);
+  await redis.del(REDIS_KEY_PREFIX + runtimeKeyHash).catch(() => undefined);
 }
 
 /**

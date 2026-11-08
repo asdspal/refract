@@ -158,3 +158,15 @@ Next: Milestone 1 (Step 1.1).
 - [ ] **Prerequisite for R-002 live:** Aurora returns `401 User authentication is required for confidential
       intent quotes`; set `AURORA_STUDIO_JWT_TOKEN` to enable confidential live quotes. Public live quotes work now.
 - [x] `tsc` clean; git commit
+
+### ✅ Step 2.2: `<400ms` Optimistic Float Credit Engine — COMPLETE
+
+- [x] `src/lib/defi/optimisticCreditEngine.ts` — atomic `FOR UPDATE` quote lock, $5.00 cap (BR-03),
+      80% liquid-reserve circuit breaker (BR-04), +8.4% subsidy, 24h optimistic session
+- [x] Deterministic optimistic nullifier + `rk_live_opt_*` key; lazy Redis seed via the meter
+- [x] `revokeOptimisticCreditOnFailure` — REVOKED session + Redis eviction + deposit FAILED/REFUNDED
+- [x] Meter adds `ERR_OPTIMISTIC_SESSION_REVOKED` for revoked sessions (Redis + Postgres paths)
+- [x] `POST /api/v1/intents/optimistic-credit` with Zod validation
+- [x] `tests/integration/optimistic-credit.test.ts` — 5/5 pass: $5 cap + 420k bonus, issue latency
+      **~335ms** (<= 400ms), duplicate 409, revocation blocks spend, 80% breaker, route 200
+- [x] `tsc` clean; git commit
