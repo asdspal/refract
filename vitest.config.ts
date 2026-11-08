@@ -15,6 +15,7 @@ export default defineConfig({
       "tests/security/**/*.test.ts",
       "tests/ai/**/*.test.ts",
       "tests/anchor/**/*.test.ts",
+      "tests/load/**/*.test.ts",
     ],
     testTimeout: 30000,
     hookTimeout: 60000,

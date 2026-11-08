@@ -237,3 +237,17 @@ Next: Milestone 1 (Step 1.1).
 - [x] **Devnet verified**: tx `3Emx2MwLc2y49UFrdw4TxMjbMmcghbkETWgTb6x1Hp8X6YWH54ZiHC9bK21v9oqBRRCSDyWuP13jGDzgo6JbGsU`
       (113,753 CU, runtime key + 840k subsidy)
 - [x] `tsc` clean; git commit
+
+### ✅ Step 3.3: Dual-Scheme x402 v2 Gateway & Ed25519 Receipts — COMPLETE
+
+- [x] `src/lib/x402/schnorrReceiptSigner.ts` — Ed25519 receipt signing/verification over a canonical
+      message; `ZKAPI_SCHNORR_SIGNING_PRIVATE_KEY_HEX` (deterministic dev key in non-production)
+- [x] `src/lib/x402/gatewayMiddleware.ts` — `withX402Gate`: 402 challenge (`PAYMENT-REQUIRED` base64,
+      all 3 schemes), runtime-key authorization, IP/payment header stripping, spend-cap firewall,
+      compensating rollback on handler 5xx, receipt insert, merchant 90/10 split,
+      `X-ZKAPI-RECEIPT` + `Server-Timing: x402-verify-dur`
+- [x] `tests/integration/x402-gateway-and-receipts.test.ts` — 5/5: 402 <50ms, paid 200 + verified
+      receipt + 90/10 split, $2.50 firewall block, 5xx rollback, unknown key 401
+- [x] `tests/load/x402_verify.test.ts` — 100 calls: **p50 40.7ms / p95 44.0ms** local
+      (15ms NFR re-measured on Vercel colocation)
+- [x] `tsc` clean; git commit
