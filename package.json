@@ -52,7 +52,8 @@
   },
   "overrides": {
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "postcss": "8.5.32"
   },
   "engines": {
     "node": ">=20.18.0"
